@@ -19,9 +19,41 @@ MODEL_PATH = BASE_DIR / "models" / "model.joblib"
 DATA_PATH = BASE_DIR / "data" / "public_transport_delays.csv"
 
 # Load pipeline
+# Load pipeline
 @st.cache_resource
 def load_pipeline():
-    return joblib.load(MODEL_PATH)
+    """Load the serialized sklearn pipeline.
+    If loading fails (missing file, unpickling error, or version mismatch),
+    we delete the corrupted model file, retrain a fresh model, and load it again.
+    This ensures the Streamlit app always starts.
+    """
+    import os
+    # If the model file does not exist, train a new one
+    if not MODEL_PATH.is_file():
+        st.info("Model file not found. Training a new model…")
+        MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+        from src.train import main as train_main
+        train_main()
+        return joblib.load(MODEL_PATH)
+    # Try loading the existing model
+    try:
+        return joblib.load(MODEL_PATH)
+    except Exception as e:
+        st.warning(f"Model loading failed ({e}). Deleting corrupted file and retraining…")
+        # Remove corrupted file
+        try:
+            os.remove(MODEL_PATH)
+        except OSError:
+            pass
+        # Retrain
+        MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+        from src.train import main as train_main
+        train_main()
+        return joblib.load(MODEL_PATH)
+
+
+
+
 
 pipeline = load_pipeline()
 preprocess = pipeline.named_steps["preprocess"]
