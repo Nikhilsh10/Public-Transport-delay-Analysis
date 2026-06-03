@@ -21,9 +21,15 @@ def load_data(csv_name: str = "public_transport_delays.csv") -> pd.DataFrame:
     Parameters
     ----------
     csv_name: str
-        Filename located under ``data/``.
+        Filename located under ``data/`` or an absolute path.
     """
-    return pd.read_csv(DATA_PATH / csv_name)
+    # Resolve to absolute path; if already absolute, keep it
+    path = DATA_PATH / csv_name if not Path(csv_name).is_absolute() else Path(csv_name)
+    if not path.is_file():
+        raise FileNotFoundError(
+            f"Dataset not found at {path}. Ensure the 'data' folder and the CSV file are present in the repository."
+        )
+    return pd.read_csv(path)
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
