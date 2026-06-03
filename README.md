@@ -1,13 +1,13 @@
 # Public Transport Delay Analysis
 
-**Developed and deployed a production‑ready machine learning pipeline for public transport delay prediction using Python, Scikit‑Learn, and Streamlit.**
+**A production‑ready machine learning pipeline for predicting public‑transport arrival delays.**
+
+**Live Demo:** https://public-transport-delay-analysis-uj4dn3z4wtrte5p8rafj7g.streamlit.app/
 
 - Built reusable training and inference modules.
 - Implemented a single sklearn preprocessing pipeline (one‑hot encoding + numeric passthrough).
 - Trained a `RandomForestRegressor` on the full Kaggle dataset.
-- **Evaluation metrics:** MAE = 4.73 min, RMSE = 7.12 min, R² = 0.31.
-- Deployed an interactive Streamlit dashboard for real‑time delay estimation, featuring delay‑severity labeling, feature‑importance visualization, and a historical delay‑distribution histogram.
-
+- Evaluation metrics: MAE = 4.73 min, RMSE = 7.12 min, R² = 0.31.
 ---
 
 ## Project Overview
