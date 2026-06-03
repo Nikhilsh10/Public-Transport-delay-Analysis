@@ -21,7 +21,7 @@ from .config import MODEL_PATH, DATA_PATH, N_ESTIMATORS, RANDOM_STATE, TEST_SIZE
 
 def main():
     parser = argparse.ArgumentParser(description="Train RandomForestRegressor for transport delay prediction")
-    parser.add_argument("--data", type=str, default=str(DATA_PATH / "public_transport_delays.csv"), help="CSV file path (absolute or relative)")
+    parser.add_argument("--data", type=str, default=str(DATA_PATH), help="CSV file path (absolute or relative)")
     parser.add_argument("--output", type=str, default=str(MODEL_PATH), help="Path to save the trained pipeline")
     args = parser.parse_args()
 

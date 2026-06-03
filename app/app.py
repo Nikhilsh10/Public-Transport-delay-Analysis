@@ -19,10 +19,11 @@ if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
 import matplotlib.pyplot as plt
 
-# Paths
-BASE_DIR = pathlib.Path(__file__).resolve().parents[1]
-MODEL_PATH = BASE_DIR / "models" / "model.joblib"
-DATA_PATH = BASE_DIR / "data" / "public_transport_delays.csv"
+# Paths (use central config for consistency and writable location)
+import src.config as cfg
+BASE_DIR = cfg.BASE_DIR
+MODEL_PATH = cfg.MODEL_PATH
+DATA_PATH = cfg.DATA_PATH
 
 # Load pipeline
 # Load pipeline

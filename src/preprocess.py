@@ -15,22 +15,32 @@ from pathlib import Path
 
 from .config import DATA_PATH, TARGET_COLUMN
 
-
 def load_data(csv_name: str = "public_transport_delays.csv") -> pd.DataFrame:
-    """Load the raw CSV from the ``data`` folder.
+    """Load the raw CSV from the configured data path.
 
     Parameters
     ----------
     csv_name: str
         Filename located under ``data/`` or an absolute path.
     """
-    # Resolve to absolute path; if already absolute, keep it
-    path = DATA_PATH / csv_name if not Path(csv_name).is_absolute() else Path(csv_name)
+    # If the default filename is requested, use the pre‑computed DATA_PATH.
+    if csv_name == "public_transport_delays.csv":
+        path = DATA_PATH
+    else:
+        potential_path = Path(csv_name)
+        if potential_path.is_absolute():
+            path = potential_path
+        else:
+            # Resolve relative to the project root.
+            path = Path(csv_name)
     if not path.is_file():
         raise FileNotFoundError(
-            f"Dataset not found at {path}. Ensure the 'data' folder and the CSV file are present in the repository."
+            f"Dataset not found at {path}. Ensure the CSV file is present at the expected location."
         )
     return pd.read_csv(path)
+
+
+
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
