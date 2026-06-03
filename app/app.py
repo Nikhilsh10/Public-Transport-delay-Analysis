@@ -39,7 +39,7 @@ def load_pipeline():
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
         import subprocess, sys
         # Run training script in a separate process to avoid import issues
-        subprocess.run([sys.executable, "-m", "src.train"], check=True)
+        subprocess.run([sys.executable, "-m", "src.train"], cwd=str(BASE_DIR), check=True)
         return joblib.load(MODEL_PATH)
     # Try loading the existing model
     try:
@@ -54,7 +54,7 @@ def load_pipeline():
         # Retrain
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
         import subprocess, sys
-        subprocess.run([sys.executable, "-m", "src.train"], check=True)
+        subprocess.run([sys.executable, "-m", "src.train"], cwd=str(BASE_DIR), check=True)
         return joblib.load(MODEL_PATH)
 
 

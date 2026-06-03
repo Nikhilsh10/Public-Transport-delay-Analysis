@@ -10,6 +10,7 @@ The module provides functions to:
 """
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
+from pathlib import Path
 # ColumnTransformer will be imported lazily inside build_preprocess_transformer
 
 from .config import DATA_PATH, TARGET_COLUMN

@@ -16,7 +16,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.pipeline import Pipeline
 
 from .preprocess import load_data, clean_data, split_features_target, build_preprocess_transformer
-from .config import MODEL_PATH, N_ESTIMATORS, RANDOM_STATE, TEST_SIZE, STRATIFY, TARGET_COLUMN
+from .config import MODEL_PATH, DATA_PATH, N_ESTIMATORS, RANDOM_STATE, TEST_SIZE, STRATIFY, TARGET_COLUMN
 
 
 def main():
