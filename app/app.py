@@ -10,7 +10,13 @@ Features:
 import streamlit as st
 import pandas as pd
 import joblib
+import os
+import sys
 import pathlib
+# Ensure the project root is in sys.path so we can import src as a package
+project_root = pathlib.Path(__file__).resolve().parents[1]
+if str(project_root) not in sys.path:
+    sys.path.append(str(project_root))
 import matplotlib.pyplot as plt
 
 # Paths
@@ -27,13 +33,13 @@ def load_pipeline():
     we delete the corrupted model file, retrain a fresh model, and load it again.
     This ensures the Streamlit app always starts.
     """
-    import os
     # If the model file does not exist, train a new one
     if not MODEL_PATH.is_file():
         st.info("Model file not found. Training a new model…")
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
-        from src.train import main as train_main
-        train_main()
+        import subprocess, sys
+        # Run training script in a separate process to avoid import issues
+        subprocess.run([sys.executable, "-m", "src.train"], check=True)
         return joblib.load(MODEL_PATH)
     # Try loading the existing model
     try:
@@ -47,8 +53,8 @@ def load_pipeline():
             pass
         # Retrain
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
-        from src.train import main as train_main
-        train_main()
+        import subprocess, sys
+        subprocess.run([sys.executable, "-m", "src.train"], check=True)
         return joblib.load(MODEL_PATH)
 
 

@@ -8,8 +8,8 @@ The module provides functions to:
   columns while passing through numeric columns.
 """
 import pandas as pd
-from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
+# ColumnTransformer will be imported lazily inside build_preprocess_transformer
 
 from .config import DATA_PATH, TARGET_COLUMN
 
