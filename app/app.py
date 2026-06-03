@@ -40,7 +40,15 @@ def load_pipeline():
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
         import subprocess, sys
         # Run training script in a separate process to avoid import issues
-        subprocess.run([sys.executable, "-m", "src.train"], cwd=str(BASE_DIR), check=True)
+        result = subprocess.run([sys.executable, "-m", "src.train"], cwd=str(BASE_DIR), capture_output=True, text=True)
+        if result.returncode != 0:
+            st.error(f"Training subprocess failed: {result.stderr}")
+            # Attempt to load model if it was partially created; otherwise raise
+            try:
+                return joblib.load(MODEL_PATH)
+            except Exception:
+                raise RuntimeError("Model training failed and model file not available.")
+        # Training succeeded, load the newly created model
         return joblib.load(MODEL_PATH)
     # Try loading the existing model
     try:
