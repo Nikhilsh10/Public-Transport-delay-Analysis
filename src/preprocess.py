@@ -59,10 +59,12 @@ def split_features_target(df: pd.DataFrame):
     return X, y
 
 
-def build_preprocess_transformer(X: pd.DataFrame) -> ColumnTransformer:
+def build_preprocess_transformer(X: pd.DataFrame) -> "ColumnTransformer":
     """Create a ``ColumnTransformer`` that one‑hot encodes categorical columns.
     Numeric columns are passed through unchanged.
     """
+    # Lazy import to avoid import errors on environments with mismatched sklearn versions
+    from sklearn.compose import ColumnTransformer
     categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
     numeric_cols = [c for c in X.columns if c not in categorical_cols]
     categorical_transformer = OneHotEncoder(drop="first", handle_unknown="ignore")
