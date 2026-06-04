@@ -10,7 +10,7 @@ The module provides functions to:
 """
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
-from pathlib import Path
+from sklearn.base import BaseEstimator, TransformerMixin
 # ColumnTransformer will be imported lazily inside build_preprocess_transformer
 
 from .config import DATA_PATH, TARGET_COLUMN
@@ -76,30 +76,32 @@ def split_features_target(df: pd.DataFrame):
     return X, y
 
 
-def build_preprocess_transformer(X: pd.DataFrame) -> "ColumnTransformer":
-    """Create a transformer that one‑hot encodes categorical columns using pandas.
+class PandasOneHotEncoder(BaseEstimator, TransformerMixin):
+    """A simple one‑hot encoder using pandas.
 
-    This avoids reliance on internal sklearn attributes that changed between versions.
+    This transformer fits on a DataFrame, records the categorical columns and the
+    generated dummy column names, and transforms new DataFrames to the same layout.
+    It is defined at module level so it can be pickled by joblib.
     """
-    from sklearn.base import BaseEstimator, TransformerMixin
-    
-    class PandasOneHotEncoder(BaseEstimator, TransformerMixin):
-        def __init__(self):
-            self.categorical_cols = []
-            self.feature_names = []
-        def fit(self, X, y=None):
-            self.categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
-            # Perform one‑hot on a sample to capture feature names
-            X_enc = pd.get_dummies(X[self.categorical_cols], drop_first=True)
-            self.feature_names = X_enc.columns.tolist()
-            return self
-        def transform(self, X):
-            X_num = X.drop(columns=self.categorical_cols)
-            X_cat = pd.get_dummies(X[self.categorical_cols], drop_first=True)
-            # Align columns with those seen during fit
-            X_cat = X_cat.reindex(columns=self.feature_names, fill_value=0)
-            return pd.concat([X_num.reset_index(drop=True), X_cat.reset_index(drop=True)], axis=1)
-        def get_feature_names_out(self, input_features=None):
-            return self.feature_names
-    
+    def __init__(self):
+        self.categorical_cols = []
+        self.feature_names = []
+    def fit(self, X, y=None):
+        self.categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
+        X_enc = pd.get_dummies(X[self.categorical_cols], drop_first=True)
+        self.feature_names = X_enc.columns.tolist()
+        return self
+    def transform(self, X):
+        X_num = X.drop(columns=self.categorical_cols)
+        X_cat = pd.get_dummies(X[self.categorical_cols], drop_first=True)
+        X_cat = X_cat.reindex(columns=self.feature_names, fill_value=0)
+        return pd.concat([X_num.reset_index(drop=True), X_cat.reset_index(drop=True)], axis=1)
+    def get_feature_names_out(self, input_features=None):
+        return self.feature_names
+
+def build_preprocess_transformer(X: pd.DataFrame) -> "PandasOneHotEncoder":
+    """Return a pandas‑based one‑hot encoder.
+    The function signature remains unchanged; the returned object is a
+    ``PandasOneHotEncoder`` instance that can be used in an sklearn ``Pipeline``.
+    """
     return PandasOneHotEncoder()
