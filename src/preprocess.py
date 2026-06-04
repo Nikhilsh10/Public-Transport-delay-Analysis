@@ -11,7 +11,7 @@ The module provides functions to:
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
-# ColumnTransformer will be imported lazily inside build_preprocess_transformer
+from pathlib import Path
 
 from .config import DATA_PATH, TARGET_COLUMN
 
