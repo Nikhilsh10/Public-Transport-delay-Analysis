@@ -51,7 +51,8 @@ def main():
     # Evaluate on test set
     y_pred = pipeline.predict(X_test)
     mae = mean_absolute_error(y_test, y_pred)
-    rmse = mean_squared_error(y_test, y_pred, squared=False)
+    rmse = mean_squared_error(y_test, y_pred)
+    rmse = rmse ** 0.5
     r2 = r2_score(y_test, y_pred)
     print(f"MAE: {mae:.3f}")
     print(f"RMSE: {rmse:.3f}")
