@@ -75,7 +75,9 @@ preprocess = pipeline.named_steps["preprocess"]
 model = pipeline.named_steps["model"]
 
 # Helper to get feature names after one‑hot encoding
-feature_names = preprocess.get_feature_names_out()
+    # Feature names for importance chart come directly from the trained model
+    feature_names = model.feature_names_in_
+
 
 # Load a single row to infer column types for UI generation
 sample_df = pd.read_csv(DATA_PATH).head(1)
