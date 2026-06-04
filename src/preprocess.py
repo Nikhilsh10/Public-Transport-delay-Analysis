@@ -77,18 +77,29 @@ def split_features_target(df: pd.DataFrame):
 
 
 def build_preprocess_transformer(X: pd.DataFrame) -> "ColumnTransformer":
-    """Create a ``ColumnTransformer`` that one‑hot encodes categorical columns.
-    Numeric columns are passed through unchanged.
+    """Create a transformer that one‑hot encodes categorical columns using pandas.
+
+    This avoids reliance on internal sklearn attributes that changed between versions.
     """
-    # Lazy import to avoid import errors on environments with mismatched sklearn versions
-    from sklearn.compose import ColumnTransformer
-    categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
-    numeric_cols = [c for c in X.columns if c not in categorical_cols]
-    categorical_transformer = OneHotEncoder(drop="first", handle_unknown="ignore")
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ("cat", categorical_transformer, categorical_cols),
-            ("num", "passthrough", numeric_cols),
-        ]
-    )
-    return preprocessor
+    from sklearn.base import BaseEstimator, TransformerMixin
+    
+    class PandasOneHotEncoder(BaseEstimator, TransformerMixin):
+        def __init__(self):
+            self.categorical_cols = []
+            self.feature_names = []
+        def fit(self, X, y=None):
+            self.categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
+            # Perform one‑hot on a sample to capture feature names
+            X_enc = pd.get_dummies(X[self.categorical_cols], drop_first=True)
+            self.feature_names = X_enc.columns.tolist()
+            return self
+        def transform(self, X):
+            X_num = X.drop(columns=self.categorical_cols)
+            X_cat = pd.get_dummies(X[self.categorical_cols], drop_first=True)
+            # Align columns with those seen during fit
+            X_cat = X_cat.reindex(columns=self.feature_names, fill_value=0)
+            return pd.concat([X_num.reset_index(drop=True), X_cat.reset_index(drop=True)], axis=1)
+        def get_feature_names_out(self, input_features=None):
+            return self.feature_names
+    
+    return PandasOneHotEncoder()

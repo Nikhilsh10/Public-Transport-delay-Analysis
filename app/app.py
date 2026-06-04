@@ -110,8 +110,11 @@ for col in X_raw.columns:
             options.append("None")
         input_data[col] = st.selectbox(col, options)
     else:
-        # numeric – use the sample value as default
-        default_val = float(X_raw[col].iloc[0]) if not X_raw[col].empty else 0.0
+        # numeric – use the sample value as default if available, else 0.0
+        try:
+            default_val = float(X_raw[col].iloc[0])
+        except Exception:
+            default_val = 0.0
         input_data[col] = st.number_input(col, value=default_val)
 
 if st.button("Predict Delay"):
