@@ -27,7 +27,7 @@ DATA_PATH = cfg.DATA_PATH
 
 # Load pipeline
 # Load pipeline
-@st.cache_resource
+
 def load_pipeline():
     """Load the serialized sklearn pipeline.
     If loading fails (missing file, unpickling error, or version mismatch),
