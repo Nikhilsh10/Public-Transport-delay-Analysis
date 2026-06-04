@@ -76,32 +76,19 @@ def split_features_target(df: pd.DataFrame):
     return X, y
 
 
-class PandasOneHotEncoder(BaseEstimator, TransformerMixin):
-    """A simple one‑hot encoder using pandas.
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
 
-    This transformer fits on a DataFrame, records the categorical columns and the
-    generated dummy column names, and transforms new DataFrames to the same layout.
-    It is defined at module level so it can be pickled by joblib.
+def build_preprocess_transformer(X: pd.DataFrame) -> ColumnTransformer:
+    """Create a ColumnTransformer that one‑hot encodes categorical columns.
+    It uses ``OneHotEncoder`` with ``drop='first'`` to avoid multicollinearity and
+    ``sparse=False`` so the output is a dense NumPy array, which works with RandomForest.
+    The transformer also passes through numeric columns unchanged.
     """
-    def __init__(self):
-        self.categorical_cols = []
-        self.feature_names = []
-    def fit(self, X, y=None):
-        self.categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
-        X_enc = pd.get_dummies(X[self.categorical_cols], drop_first=True)
-        self.feature_names = X_enc.columns.tolist()
-        return self
-    def transform(self, X):
-        X_num = X.drop(columns=self.categorical_cols)
-        X_cat = pd.get_dummies(X[self.categorical_cols], drop_first=True)
-        X_cat = X_cat.reindex(columns=self.feature_names, fill_value=0)
-        return pd.concat([X_num.reset_index(drop=True), X_cat.reset_index(drop=True)], axis=1)
-    def get_feature_names_out(self, input_features=None):
-        return self.feature_names
-
-def build_preprocess_transformer(X: pd.DataFrame) -> "PandasOneHotEncoder":
-    """Return a pandas‑based one‑hot encoder.
-    The function signature remains unchanged; the returned object is a
-    ``PandasOneHotEncoder`` instance that can be used in an sklearn ``Pipeline``.
-    """
-    return PandasOneHotEncoder()
+    categorical_cols = X.select_dtypes(include=["object"]).columns.tolist()
+    # Define the transformer: one‑hot encode categoricals, passthrough numerics
+    preprocessor = ColumnTransformer(
+        transformers=[("cat", OneHotEncoder(drop="first", sparse_output=False, handle_unknown="ignore"), categorical_cols)],
+        remainder="passthrough",
+    )
+    return preprocessor
