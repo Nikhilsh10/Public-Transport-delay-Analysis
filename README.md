@@ -2,7 +2,7 @@
 
 **A production‑ready machine learning pipeline for predicting public‑transport arrival delays.**
 
-**Live Demo:** https://public-transport-delay-analysis-uj4dn3z4wtrte5p8rafj7g.streamlit.app/
+**Live Demo:** (https://public-transport-delay-analysis-st4p559gagmrxp5yjf8scr.streamlit.app/)
 
 - Built reusable training and inference modules.
 - Implemented a single sklearn preprocessing pipeline (one‑hot encoding + numeric passthrough).
