@@ -68,7 +68,7 @@ class PandasOneHotEncoder(BaseEstimator, TransformerMixin):
         cat_cols = X.select_dtypes(include=["object"]).columns.tolist()
         for col in cat_cols:
             series = X[col].fillna(self.placeholder).astype(str)
-            cats = series.unique().tolist()
+            cats = sorted(series.unique().tolist())
             if self.drop_first and len(cats) > 1:
                 # drop the first category to mimic OneHotEncoder(drop='first')
                 cats = cats[1:]
