@@ -11,6 +11,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import os
+import subprocess
 import sys
 import pathlib
 # Ensure the project root is in sys.path so we can import src as a package
@@ -26,7 +27,6 @@ MODEL_PATH = cfg.MODEL_PATH
 DATA_PATH = cfg.DATA_PATH
 
 # Load pipeline
-# Load pipeline
 
 def load_pipeline():
     """Load the serialized sklearn pipeline.
@@ -38,7 +38,6 @@ def load_pipeline():
     if not MODEL_PATH.is_file():
         st.info("Model file not found. Training a new model…")
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
-        import subprocess, sys
         # Run training script in a separate process to avoid import issues
         result = subprocess.run([sys.executable, "-m", "src.train"], cwd=str(BASE_DIR), capture_output=True, text=True)
         if result.returncode != 0:
@@ -62,7 +61,6 @@ def load_pipeline():
             pass
         # Retrain
         MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
-        import subprocess, sys
         subprocess.run([sys.executable, "-m", "src.train"], cwd=str(BASE_DIR), check=True)
         return joblib.load(MODEL_PATH)
 
