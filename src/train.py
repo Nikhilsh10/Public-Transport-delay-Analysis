@@ -32,6 +32,13 @@ def main():
     # Split features and target
     X, y = split_features_target(df)
 
+    if len(X) < 20:
+        raise ValueError(
+            f"Dataset has only {len(X)} samples. "
+            f"Need at least 20 for meaningful training. "
+            f"Check data/public_transport_delays.csv."
+        )
+
     # Build preprocessing transformer
     preprocessor = build_preprocess_transformer(X)
 
