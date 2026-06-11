@@ -5,7 +5,7 @@
 **Live Demo:** (https://public-transport-delay-analysis-st4p559gagmrxp5yjf8scr.streamlit.app/)
 
 - Built reusable training and inference modules.
-- Implemented a single sklearn preprocessing pipeline (one‑hot encoding + numeric passthrough).
+- Implemented a single sklearn preprocessing pipeline (one‑hot encoding + numeric passthrough). 
 - Trained a `RandomForestRegressor` on the full Kaggle dataset.
 - Evaluation metrics: MAE = 4.73 min, RMSE = 7.12 min, R² = 0.31.
 ---
